@@ -38,6 +38,22 @@ Loaded automatically when editing matching files:
 |---------|-------------|
 | `/lint` | Run linter on changed files only (Go and Frontend), auto-fix and retry |
 | `/test` | Run tests for changed files only (Go and Frontend), fix failures and retry |
+| `/review` | Review architecture, design, and standards compliance on changed files |
+
+### Recommended workflow
+
+All commands compare committed changes in the current branch against `main`. Commit your work before running them.
+
+```
+write code → commit → /lint → /test → commit fixes → /review → fix if needed → /lint → /test → commit → push
+```
+
+1. **`/lint`** first — auto-fixes formatting and catches static analysis issues
+2. **`/test`** second — runs tests and fixes failures
+3. **Commit** any fixes from lint and test
+4. **`/review`** last — read-only analysis of architecture, design, and naming (only checks what automated tools can't catch)
+5. If review leads to code changes, **re-run `/lint` and `/test`** to ensure nothing broke
+6. **Commit and push**
 
 ## Installation
 

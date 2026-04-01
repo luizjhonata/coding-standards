@@ -2,7 +2,7 @@
 # install-rules.sh — Download and install AI assistant rule files.
 #
 # Usage:
-#   ./install-rules.sh [target-dir]
+#   ./install-rules.sh [--force] [target-dir]
 #
 # If target-dir is provided, rules are installed at project level:
 #   <target>/.claude/rules/  <target>/.claude/commands/  <target>/.claude/CLAUDE.md
@@ -63,15 +63,34 @@ download_file() {
   fi
 }
 
-list_remote_entries() {
-  path="$1"
-  response=$(curl -fsSL "${API_URL}/${path}?ref=${BRANCH}" 2>/dev/null) || {
-    echo "Error: failed to list files at ${path}" >&2
-    return 1
+# download_directory recursively downloads all files from a GitHub directory.
+# Args: $1 = remote path (e.g., "claude/rules"), $2 = local base dir (e.g., "$TARGET_DIR/.claude/rules")
+download_directory() {
+  remote_path="$1"
+  local_base="$2"
+  response=$(curl -fsSL "${API_URL}/${remote_path}?ref=${BRANCH}" 2>/dev/null) || {
+    echo "  Warning: failed to list ${remote_path}" >&2
+    return 0
   }
-  echo "$response" \
-    | grep -o '"name": *"[^"]*"' \
-    | sed 's/"name": *"//;s/"//'
+
+  # Extract entries with their types (file or dir)
+  entries=$(echo "$response" | grep -o '"name": *"[^"]*"\|"type": *"[^"]*"' | sed 's/"name": *"//;s/"type": *"//;s/"//')
+
+  # Process pairs of (name, type)
+  name=""
+  echo "$entries" | while read -r value; do
+    if [ -z "$name" ]; then
+      name="$value"
+    else
+      type="$value"
+      if [ "$type" = "file" ]; then
+        download_file "${BASE_URL}/${remote_path}/${name}" "${local_base}/${name}"
+      elif [ "$type" = "dir" ]; then
+        download_directory "${remote_path}/${name}" "${local_base}/${name}"
+      fi
+      name=""
+    fi
+  done
 }
 
 echo "Installing coding standards into: $TARGET_DIR"
@@ -82,18 +101,14 @@ echo "Claude Code CLAUDE.md:"
 download_file "${BASE_URL}/claude/CLAUDE.md" "${TARGET_DIR}/.claude/CLAUDE.md"
 echo ""
 
-# Claude Code rules
+# Claude Code rules (recursive)
 echo "Claude Code rules:"
-for file in $(list_remote_entries "claude/rules"); do
-  download_file "${BASE_URL}/claude/rules/${file}" "${TARGET_DIR}/.claude/rules/${file}"
-done
+download_directory "claude/rules" "${TARGET_DIR}/.claude/rules"
 echo ""
 
-# Claude Code commands
+# Claude Code commands (recursive)
 echo "Claude Code commands:"
-for file in $(list_remote_entries "claude/commands"); do
-  download_file "${BASE_URL}/claude/commands/${file}" "${TARGET_DIR}/.claude/commands/${file}"
-done
+download_directory "claude/commands" "${TARGET_DIR}/.claude/commands"
 echo ""
 
 echo "Done."

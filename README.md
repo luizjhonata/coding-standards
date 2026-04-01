@@ -8,23 +8,24 @@ These rules are designed for [Claude Code](https://docs.anthropic.com/en/docs/cl
 
 ## What's included
 
-### CLAUDE.md (global standards)
+### CLAUDE.md (universal standards)
 
-Core rules loaded in every session: architecture (Clean Architecture + DDD), design principles, code style, type system, error handling, linting, security, testing workflow, and commit conventions.
+Core rules loaded in every session regardless of language: architecture (Clean Architecture + DDD), design principles, commit conventions, development workflow (TDD), agent usage, and self-review checklist.
 
 ### Rules (path-scoped)
 
-Detailed patterns loaded automatically when editing matching files:
+Loaded automatically when editing matching files:
 
 | Rule | Scope |
 |------|-------|
 | **Go backend** | |
-| `api-design.md` | Controllers, requests, responses, mappers |
-| `controllers.md` | Controller files |
-| `database.md` | Repositories, migrations |
-| `dependency-injection.md` | DI container and wire files |
-| `repository-testing.md` | Repository test files |
-| `testing.md` | Test files, builders, doubles |
+| `golang.md` | All `.go` files — architecture, code style, type system, logging, linting, SonarQube, security |
+| `go/api-design.md` | Controllers, requests, responses, mappers |
+| `go/controllers.md` | Gin controller patterns and Swagger |
+| `go/database.md` | Repositories, migrations, transactions |
+| `go/dependency-injection.md` | Wire and manual DI |
+| `go/repository-testing.md` | Repository test patterns |
+| `go/testing.md` | Build flags, BDD, parallel/sequential, builders, testify |
 | **Infrastructure** | |
 | `terra-cli.md` | Terraform/Terragrunt files |
 | **General** | |
@@ -75,15 +76,17 @@ coding-standards/
     │   ├── lint.md
     │   └── test.md
     └── rules/
-        ├── api-design.md
+        ├── golang.md
+        ├── go/
+        │   ├── api-design.md
+        │   ├── controllers.md
+        │   ├── database.md
+        │   ├── dependency-injection.md
+        │   ├── repository-testing.md
+        │   └── testing.md
         ├── commit-changelog.md
-        ├── controllers.md
-        ├── database.md
-        ├── dependency-injection.md
         ├── project-onboarding.md
-        ├── repository-testing.md
-        ├── terra-cli.md
-        └── testing.md
+        └── terra-cli.md
 ```
 
 ## Roadmap

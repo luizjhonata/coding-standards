@@ -1,26 +1,26 @@
-Create a Jira ticket (Epic, Story, Task, or Bug) with structured content generated from user context.
+Create a Jira ticket (Epic, Story, Bug, or Subtask) with structured content generated from user context.
 
 The user provides the goal or problem informally (often in their native language). This command generates the title, description, and acceptance criteria in English, presents a draft for approval, and creates the ticket via the Atlassian MCP.
+
+## Issue hierarchy
+
+```
+Epic
+  └── Story or Bug
+        └── Subtask (optional)
+```
 
 ## Step 1: Determine ticket type
 
 Ask the user what type of ticket to create if not specified:
-- **Epic** — large initiative with multiple stories
-- **Story** — user-facing feature or deliverable
-- **Task** — technical work not directly user-facing
-- **Bug** — defect in existing functionality
+- **Epic** — large initiative containing multiple stories
+- **Story** — user-facing feature or deliverable (lives under an Epic)
+- **Bug** — defect in existing functionality (lives under an Epic)
+- **Subtask** — small piece of work under a Story or Bug
 
-## Step 2: Load team defaults
+## Step 2: Load defaults from memory
 
-Check memory for saved Jira defaults. If found, use them. If not found, ask the user:
-
-1. **Jira Cloud ID** — the Atlassian site identifier
-2. **Project key** — e.g., `DS`
-3. **Team name** — for the Team field
-4. **Default story points** — typical SP for stories/tasks
-5. **Any custom required fields** — fields specific to their Jira setup
-
-After collecting, save these defaults to memory so they are available in future sessions. Inform the user: "Defaults saved. Next time I'll use these automatically."
+Check memory for Jira defaults (cloud ID, project key, team, field IDs, sprint conventions). If not found, ask the user and save to memory for future sessions.
 
 ## Step 3: Collect context from user
 
@@ -33,9 +33,13 @@ Ask the user to describe what the ticket should cover. Accept informal input in 
 
 If the user already provided this context in the conversation, do NOT ask again.
 
+**Sprint**: ask the user if the work is starting now or is for future planning.
+- Starting now → assign the current sprint (monthly, format: "Mon YY", e.g., "Apr 26")
+- Future planning → leave sprint empty
+
 ## Step 4: Generate draft
 
-Generate ALL content in English:
+Generate ALL content in English.
 
 ### Epic draft
 ```
@@ -51,7 +55,6 @@ Description:
 ## Stories
 - [ ] Story 1: [title]
 - [ ] Story 2: [title]
-- [ ] ...
 
 ## Success Criteria
 - [measurable outcome 1]
@@ -61,9 +64,12 @@ Description:
 - [list any dependencies or blockers]
 ```
 
-### Story / Task draft
+### Story draft
 ```
 Title: [concise, max 80 chars]
+Story Points: [estimated based on scope — minimum 1]
+Priority: [Critical | High | Medium | Low | Informational]
+Sprint: [current sprint or empty]
 
 Description:
 ## Context
@@ -85,6 +91,8 @@ Description:
 ### Bug draft
 ```
 Title: [Bug] [concise description]
+Story Points: [estimated based on scope — minimum 1]
+Sprint: [current sprint or empty]
 
 Description:
 ## Current Behavior
@@ -105,9 +113,17 @@ Description:
 - [ ] [no regression in related functionality]
 ```
 
+### Subtask draft
+```
+Title: [concise, max 80 chars]
+
+Description:
+[what this subtask covers and definition of done]
+```
+
 ## Step 5: Present draft for approval
 
-Show the complete draft to the user. Wait for explicit approval before creating.
+Show the complete draft to the user including all fields that will be set (type, title, description, story points, priority, sprint, team, parent epic). Wait for explicit approval before creating.
 
 The user may:
 - Approve as-is → proceed to create
@@ -116,13 +132,15 @@ The user may:
 
 ## Step 6: Create in Jira
 
-Use the Atlassian MCP to create the ticket with:
-- The approved title and description
-- Team defaults from memory (project, team, story points)
-- Appropriate issue type
+Use the Atlassian MCP to create the ticket with all required fields:
+
+**Epic**: project, summary, description
+**Story**: project, summary, description, team, story points, priority, sprint (if applicable), parent (epic)
+**Bug**: project, summary, description, team, story points, sprint (if applicable), parent (epic)
+**Subtask**: project, summary, description, parent (story or bug)
 
 After creation, report the ticket key and URL.
 
 ## Step 7: Link to Epic (if applicable)
 
-If creating a Story, Task, or Bug, ask if it should be linked to an existing Epic. If yes, use the Atlassian MCP to create the link.
+If creating a Story or Bug, ask which Epic it belongs to. Set the `parent` field to link it. If the user doesn't know the Epic key, search for recent Epics in the project to help them choose.

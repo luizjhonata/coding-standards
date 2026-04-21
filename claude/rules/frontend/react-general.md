@@ -6,6 +6,27 @@ paths:
 
 # React / TypeScript / Styled Components Standards
 
+## New Project Bootstrap
+
+Before writing component code in a new React/TypeScript/Vite project, define the foundation:
+
+1. **Folder structure** — establish the layout before the first component
+2. **ESLint + Prettier** — configure from the start, not retroactively
+3. **Testing setup** — Jest or Vitest configured and a first smoke test passing
+4. **Styled-components** — co-located `styles.ts` pattern from day one
+
+```
+src/
+  components/
+    shared/            # reusable across pages
+    pages/             # page-level components
+  hooks/               # custom hooks
+  services/            # API calls
+  types/               # shared TypeScript types
+```
+
+If the project needs a design system later (theme provider, palette tokens, typography scale), add a `theme/` directory at that point — do not pre-create it.
+
 ## File Naming
 
 - `snake_case` for all files (e.g., `my_component.tsx`, `use_my_hook.ts`, `styles.ts`)

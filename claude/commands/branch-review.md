@@ -1,6 +1,8 @@
 Review code changes in the current branch compared to main. The goal is to validate architecture, design, and standards compliance — things that automated tools (lint, test) cannot catch.
 
-**Prerequisite**: `/lint` and `/test` must pass before running this command. If they haven't been run, remind the user and stop.
+**Prerequisite**: `/branch-lint` and `/branch-test` must pass before running this command. If they haven't been run, remind the user and stop.
+
+All review output MUST be in English.
 
 ## Step 1: Gather changes
 
@@ -32,14 +34,15 @@ Focus exclusively on what lint and test tools **cannot catch**:
 - **Code organization**: files in the right layer/directory, correct separation of concerns
 - **Missing tests**: does every new production function have a corresponding test file
 - **Domain design**: rich vs anemic models, value objects used where appropriate
+- **Test quality**: ask "what bug would this test catch?" — flag smoke tests with near-zero value
 
 Do NOT flag issues that lint or static analysis already covers (formatting, import order, unused variables, error wrapping syntax, etc.).
 
 ## Step 4: Classify findings
 
-- **Must fix**: architecture violations, domain layer corruption, missing tests for new code, SRP violations
-- **Should fix**: naming doesn't match conventions, code in wrong layer, anemic domain models
-- **Consider**: opportunities to improve design without rule violations
+- **Critical** — must fix before merge: architecture violations, domain layer corruption, missing tests for new code, security issues, any `eslint-disable`
+- **Suggestion** — should fix before merge: naming doesn't match conventions, code in wrong layer, anemic domain models, code quality patterns
+- **Nice to have** — optional: opportunities to improve design without rule violations
 
 ## Step 5: Report results
 
@@ -47,16 +50,19 @@ Do NOT flag issues that lint or static analysis already covers (formatting, impo
 ## Review Summary
 
 **Files reviewed**: X
-**Findings**: X must fix, X should fix, X consider
+**Findings**: X critical, X suggestion, X nice to have
 
-### Must Fix
+### Critical (must fix before merge)
 - `file.go:42` — [Architecture] description of the issue and which rule it violates
 
-### Should Fix
+### Suggestions (should fix before merge)
 - `file.go:15` — [Naming] description of the issue
 
-### Consider
+### Nice to have
 - `file.go:78` — suggestion for improvement
+
+### Positive
+- what was done well
 
 ### Clean Files
 - `file.go` — no issues found
@@ -65,6 +71,6 @@ Do NOT flag issues that lint or static analysis already covers (formatting, impo
 ## Step 6: Fix issues (if requested)
 
 Do NOT auto-fix anything. Present the report and wait for the user to decide:
-- If the user asks to fix all, fix in order: must fix → should fix → consider.
+- If the user asks to fix all, fix in order: critical → suggestion → nice to have.
 - If the user asks to fix specific items, fix only those.
-- After any code changes, remind the user: "Code was modified during review. Run `/lint` and `/test` to ensure changes pass before committing."
+- After any code changes, remind the user: "Code was modified during review. Run `/branch-lint` and `/branch-test` to ensure changes pass before committing."

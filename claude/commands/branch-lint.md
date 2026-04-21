@@ -28,4 +28,23 @@ Run lint only on files changed in the current branch compared to main. The goal 
 
 ## Step 3: Report results
 
-Report the final results: which files were checked, which were auto-fixed by the linter, which were manually fixed by you, and confirm all clean.
+**CRITICAL**: The report MUST clearly separate auto-fixed files from clean files. The user needs to know exactly what changed to stage those files for commit. If `--fix` corrected anything, NEVER report "0 errors" without listing what was auto-corrected.
+
+Report format:
+
+```
+## Lint Results
+
+**Auto-fixed by linter** (need to be staged):
+- `file1.tsx` — import order
+- `file2.ts` — formatting
+
+**Manually fixed**:
+- `file3.tsx` — max-statements violation (extracted helper function)
+
+**Clean** (no changes needed):
+- `file4.tsx`
+
+**Still failing** (if any):
+- `file5.tsx:42` — error description
+```

@@ -71,6 +71,7 @@ Strict layer separation: Controllers → Commands (Application) → Entities + R
 - Multiple tickets: `fix(DS-567+DS-568): description`
 - Long commits: subject line + blank line + body with bullet points
 - Breaking changes must be flagged in three places: commit footer (`**BREAKING CHANGE:**`), CHANGELOG.md, and PR description
+- Every PR MUST include a CHANGELOG.md entry under `## [Unreleased]` — do not open a PR without it
 - NEVER squash commits without explicit user confirmation. NEVER force push without explicit request
 - Detailed commit and CHANGELOG workflow in `.claude/rules/commit-changelog.md`
 

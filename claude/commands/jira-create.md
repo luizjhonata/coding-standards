@@ -37,6 +37,10 @@ If the user already provided this context in the conversation, do NOT ask again.
 - Starting now → assign the current sprint (monthly, format: "Mon YY", e.g., "Apr 26")
 - Future planning → leave sprint empty
 
+**Assignee**: ask who should be assigned to this ticket.
+- If the user names someone, use `lookupJiraAccountId` to resolve their account ID
+- If the user says "me" or does not specify, use `lookupJiraAccountId` with the current user's email
+
 ## Step 4: Generate draft
 
 Generate ALL content in English.
@@ -123,7 +127,7 @@ Description:
 
 ## Step 5: Present draft for approval
 
-Show the complete draft to the user including all fields that will be set (type, title, description, story points, priority, sprint, team, parent epic). Wait for explicit approval before creating.
+Show the complete draft to the user including all fields that will be set (type, title, description, story points, priority, sprint, assignee, team, parent epic, initial status). Wait for explicit approval before creating.
 
 The user may:
 - Approve as-is → proceed to create
@@ -134,13 +138,20 @@ The user may:
 
 Use the Atlassian MCP to create the ticket with all required fields:
 
-**Epic**: project, summary, description
-**Story**: project, summary, description, team, story points, priority, sprint (if applicable), parent (epic)
-**Bug**: project, summary, description, team, story points, sprint (if applicable), parent (epic)
-**Subtask**: project, summary, description, parent (story or bug)
+**Epic**: project, summary, description, assignee
+**Story**: project, summary, description, team, story points, priority, sprint (if applicable), parent (epic), assignee
+**Bug**: project, summary, description, team, story points, sprint (if applicable), parent (epic), assignee
+**Subtask**: project, summary, description, parent (story or bug), assignee
 
 After creation, report the ticket key and URL.
 
-## Step 7: Link to Epic (if applicable)
+## Step 7: Transition initial status (if applicable)
+
+After creation, check whether the ticket should be moved out of "To Do":
+- If the user indicated they are starting work now (e.g., sprint is current, or they said so explicitly) → ask if it should be transitioned to "In Progress"
+- Default: leave as "To Do" unless the user specifies otherwise
+- If confirmed → use `getTransitionsForJiraIssue` to find the correct transition ID, then `transitionJiraIssue` to move to "In Progress"
+
+## Step 8: Link to Epic (if applicable)
 
 If creating a Story or Bug, ask which Epic it belongs to. Set the `parent` field to link it. If the user doesn't know the Epic key, search for recent Epics in the project to help them choose.

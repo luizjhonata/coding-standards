@@ -27,6 +27,13 @@ src/
 
 If the project needs a design system later (theme provider, palette tokens, typography scale), add a `theme/` directory at that point — do not pre-create it.
 
+## ESM vs CommonJS
+
+When `package.json` has `"type": "module"`, Node.js treats `.js` files as ESM. Files using `require()` (CommonJS) must use the `.cjs` extension.
+
+- Config files that use `require()` (e.g., SonarQube scanner, certain Jest configs) → use `.cjs`
+- Update any script references in `package.json` to point to the `.cjs` file
+
 ## File Naming
 
 - `snake_case` for all files (e.g., `my_component.tsx`, `use_my_hook.ts`, `styles.ts`)

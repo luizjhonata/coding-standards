@@ -53,6 +53,12 @@ modules/
 - Use `count` or `for_each` for conditional/repeated resources — prefer `for_each` for named resources
 - CLI usage, quality checks and safety guards are defined in `terra-cli.md`
 
+### Version Verification
+
+Always check current documentation for the latest available version of protocols, APIs, and services before proposing a value. Do not rely on training data. This applies to TLS policies, API versions, SDK versions, AMI IDs, provider versions, and module versions.
+
+If unable to verify, explicitly state the version may not be the latest and recommend the user double-check.
+
 ## Helm
 
 ### Chart Structure

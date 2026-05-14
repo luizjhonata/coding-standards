@@ -2,7 +2,7 @@
 
 Actionable coding standards for AI-assisted development. Ensures consistent, high-quality code generation across projects regardless of the AI tool being used.
 
-Currently covers **Go backend** and **Terraform/Terragrunt infrastructure**, with plans to expand to other stacks.
+Currently covers **Go backend**, **React/TypeScript frontend**, and **Terraform/Terragrunt infrastructure**, with plans to expand to other stacks.
 
 These rules are designed for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) but the standards themselves are tool-agnostic.
 
@@ -10,7 +10,7 @@ These rules are designed for [Claude Code](https://docs.anthropic.com/en/docs/cl
 
 ### CLAUDE.md (universal standards)
 
-Core rules loaded in every session regardless of language: architecture (Clean Architecture + DDD), design principles, commit conventions, development workflow (TDD), agent usage, and self-review checklist.
+Core rules loaded in every session regardless of language: architecture (Clean Architecture + DDD), design principles, commit conventions, development workflow (TDD), pre-PR validation, agent usage, and self-review checklist.
 
 ### Rules (path-scoped)
 
@@ -25,34 +25,40 @@ Loaded automatically when editing matching files:
 | `go/database.md` | Repositories, migrations, transactions |
 | `go/dependency-injection.md` | Wire and manual DI |
 | `go/repository-testing.md` | Repository test patterns |
-| `go/testing.md` | Build flags, BDD, parallel/sequential, builders, testify |
+| `go/testing.md` | Build flags, BDD, parallel tests, sub-test naming, builders, testify |
+| **Frontend** | |
+| `frontend/react-general.md` | React, TypeScript, styled-components, ESM/CJS |
+| `frontend/osd-plugin.md` | OpenSearch Dashboards plugin development |
 | **Infrastructure** | |
-| `terra-cli.md` | Terraform/Terragrunt files |
+| `infra/terraform.md` | Terraform, Terragrunt, Helm, version verification |
+| `terra-cli.md` | Terraform/Terragrunt CLI wrapper usage |
 | **General** | |
-| `commit-changelog.md` | CHANGELOG.md |
+| `commit-changelog.md` | CHANGELOG.md — entries, rebase conflict resolution |
 | `project-onboarding.md` | README, main.go, go.mod, Dockerfile |
+| `azure-devops-pr.md` | Azure DevOps PR descriptions via MCP |
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
-| `/lint` | Run linter on changed files only (Go and Frontend), auto-fix and retry |
-| `/test` | Run tests for changed files only (Go and Frontend), fix failures and retry |
-| `/review` | Review architecture, design, and standards compliance on changed files |
+| `/branch-lint` | Run linter on changed files only (Go and Frontend), auto-fix and retry |
+| `/branch-test` | Run tests for changed files only (Go and Frontend), fix failures and retry |
+| `/branch-review` | Review architecture, design, and standards compliance on changed files |
+| `/jira-create` | Create Jira tickets (Epic, Story, Bug, Subtask) with structured content |
 
 ### Recommended workflow
 
 All commands compare committed changes in the current branch against `main`. Commit your work before running them.
 
 ```
-write code → commit → /lint → /test → commit fixes → /review → fix if needed → /lint → /test → commit → push
+write code → commit → /branch-lint → /branch-test → commit fixes → /branch-review → fix if needed → /branch-lint → /branch-test → commit → push
 ```
 
-1. **`/lint`** first — auto-fixes formatting and catches static analysis issues
-2. **`/test`** second — runs tests and fixes failures
+1. **`/branch-lint`** first — auto-fixes formatting and catches static analysis issues
+2. **`/branch-test`** second — runs tests and fixes failures
 3. **Commit** any fixes from lint and test
-4. **`/review`** last — read-only analysis of architecture, design, and naming (only checks what automated tools can't catch)
-5. If review leads to code changes, **re-run `/lint` and `/test`** to ensure nothing broke
+4. **`/branch-review`** last — read-only analysis of architecture, design, and naming (only checks what automated tools can't catch)
+5. If review leads to code changes, **re-run `/branch-lint` and `/branch-test`** to ensure nothing broke
 6. **Commit and push**
 
 ## Installation
@@ -89,8 +95,10 @@ coding-standards/
 └── claude/
     ├── CLAUDE.md
     ├── commands/
-    │   ├── lint.md
-    │   └── test.md
+    │   ├── branch-lint.md
+    │   ├── branch-test.md
+    │   ├── branch-review.md
+    │   └── jira-create.md
     └── rules/
         ├── golang.md
         ├── go/
@@ -100,6 +108,12 @@ coding-standards/
         │   ├── dependency-injection.md
         │   ├── repository-testing.md
         │   └── testing.md
+        ├── frontend/
+        │   ├── react-general.md
+        │   └── osd-plugin.md
+        ├── infra/
+        │   └── terraform.md
+        ├── azure-devops-pr.md
         ├── commit-changelog.md
         ├── project-onboarding.md
         └── terra-cli.md
@@ -109,5 +123,3 @@ coding-standards/
 
 - [ ] Java backend standards
 - [ ] TypeScript backend standards
-- [ ] TypeScript frontend standards
-- [ ] React standards

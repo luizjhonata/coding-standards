@@ -16,6 +16,41 @@ paths:
 //go:build integration || unit || test // All tests
 ```
 
+## Parallel Tests (MANDATORY)
+
+ALL test functions with sub-tests (`t.Run`) MUST call `t.Parallel()` at the top level AND inside each sub-test. This is enforced by the `tparallel` linter.
+
+```go
+func TestExample(t *testing.T) {
+    t.Parallel()
+
+    t.Run("should do something when condition is met", func(t *testing.T) {
+        t.Parallel()
+        // ...
+    })
+}
+```
+
+## Sub-test Naming Convention (MANDATORY)
+
+ALL sub-test names MUST follow the `"should ... when ..."` pattern. This makes test output read as behavior specifications.
+
+- Pattern: `"should <expected behavior> when <condition>"`
+- Use lowercase after `should` and `when`
+- Be specific about the behavior, not the implementation
+
+```go
+// correct
+t.Run("should return access_token type when issuer matches KC Central realm", ...)
+t.Run("should return error when input is empty", ...)
+t.Run("should return OK (200) when alerts are fetched successfully", ...)
+
+// wrong
+t.Run("returns access_token type for internal issuer", ...)
+t.Run("test empty input", ...)
+t.Run("error case", ...)
+```
+
 ## Given-When-Then Pattern (MANDATORY)
 
 ALL tests MUST use lowercase comments. No exceptions.

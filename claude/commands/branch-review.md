@@ -4,6 +4,17 @@ Review code changes in the current branch compared to main. The goal is to valid
 
 All review output MUST be in English.
 
+## Step 0: Resolve branch
+
+If a branch name is provided as argument:
+
+1. Check if the branch exists locally: `git rev-parse --verify <branch> 2>/dev/null`
+2. If it does NOT exist locally, run `git fetch origin` to pull remote refs, then checkout: `git checkout <branch>`
+3. If it already exists locally, just checkout: `git checkout <branch>`
+4. Confirm you are on the correct branch with `git branch --show-current`.
+
+If no argument is provided, use the current branch as-is.
+
 ## Step 1: Gather changes
 
 1. Get the list of changed files: `git diff --name-only main...HEAD`
@@ -35,6 +46,8 @@ Focus exclusively on what lint and test tools **cannot catch**:
 - **Missing tests**: does every new production function have a corresponding test file
 - **Domain design**: rich vs anemic models, value objects used where appropriate
 - **Test quality**: ask "what bug would this test catch?" — flag smoke tests with near-zero value
+- **Test conventions (Go)**: `t.Parallel()` at top level AND in every sub-test, sub-test names follow `"should ... when ..."` pattern, given-when-then comments
+- **CHANGELOG section order**: must follow Keep a Changelog (Added > Changed > Deprecated > Removed > Fixed > Security) — flag if sections are out of order
 
 Do NOT flag issues that lint or static analysis already covers (formatting, import order, unused variables, error wrapping syntax, etc.).
 

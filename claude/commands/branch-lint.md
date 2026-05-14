@@ -1,5 +1,16 @@
 Run lint only on files changed in the current branch compared to main. The goal is to validate what will be sent in a PR.
 
+## Step 0: Resolve branch
+
+If a branch name is provided as argument:
+
+1. Check if the branch exists locally: `git rev-parse --verify <branch> 2>/dev/null`
+2. If it does NOT exist locally, run `git fetch origin` to pull remote refs, then checkout: `git checkout <branch>`
+3. If it already exists locally, just checkout: `git checkout <branch>`
+4. Confirm you are on the correct branch with `git branch --show-current`.
+
+If no argument is provided, use the current branch as-is.
+
 ## Step 1: Detect project type
 
 - If `package.json` exists in the working directory → **Frontend** (JavaScript/TypeScript)

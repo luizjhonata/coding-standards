@@ -86,6 +86,17 @@ Strict layer separation: Controllers → Commands (Application) → Entities + R
   2. Implement the minimum code to make the test pass
   3. Refactor while keeping tests green
 - No production code without a corresponding test
+- When modifying a constructor or function signature, ALWAYS search for all callers to verify no positional arguments or invocations are broken
+
+## Pre-PR Validation (mandatory)
+
+NEVER create a PR without running these three skills in order:
+
+1. `/branch-lint` — catches formatting, lint errors, and auto-fixes what it can
+2. `/branch-test` — runs tests on changed code to catch regressions
+3. `/branch-review` — catches architecture, design, caller-impact, and dead code issues
+
+If any skill reports failures, fix them before proceeding to the next step. Only after all three pass, create the PR.
 
 ## External Systems
 

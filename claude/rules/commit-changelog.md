@@ -18,7 +18,7 @@ git branch --show-current   # extract Jira ticket (e.g. feat/TICKET-1234 -> TICK
 
 ## Step 2: Update CHANGELOG.md
 
-Add entries under `## [Unreleased]`. Subsection order: `### Fixed`, `### Added`, `### Changed`, `### Removed`.
+Add entries under `## [Unreleased]`. Subsection order follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): `### Added`, `### Changed`, `### Deprecated`, `### Removed`, `### Fixed`, `### Security`.
 
 ### Entry Rules
 
@@ -26,6 +26,7 @@ Add entries under `## [Unreleased]`. Subsection order: `### Fixed`, `### Added`,
 - Append Jira link: `- [TICKET-XXXX](https://company.atlassian.net/browse/TICKET-XXXX)`
 - Wrap identifiers in backticks
 - One entry per logical change
+- Always append new entries **below** existing entries within the same subsection — never insert above them, so that the most recent addition is the last item in the list
 
 ### Example
 
@@ -70,3 +71,15 @@ Title: max 72 chars, imperative mood, lowercase after colon, no trailing period.
 ## Post-Squash
 
 Remind user that `git push --force-with-lease` is required. NEVER force push without explicit request.
+
+## CHANGELOG Rebase Conflict Resolution
+
+When resolving CHANGELOG.md conflicts during rebase, NEVER manually merge sections. Follow this pattern:
+
+1. `git checkout origin/main -- CHANGELOG.md` — restore the file entirely from main
+2. Add ONLY your new entry to the appropriate section
+3. `git add CHANGELOG.md && git rebase --continue`
+
+**Why:** CHANGELOG conflicts are tricky because both sides add entries under `## [Unreleased]`. Manual merge resolution can accidentally incorporate main's entries into your commit's diff — which then shows as deletions when the branch is compared against main.
+
+**Verify:** After resolution, run `git diff origin/main -- CHANGELOG.md` — the diff should show ONLY your added lines, zero deletions.

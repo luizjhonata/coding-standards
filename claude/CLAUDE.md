@@ -72,6 +72,7 @@ Strict layer separation: Controllers → Commands (Application) → Entities + R
 - Long commits: subject line + blank line + body with bullet points
 - Breaking changes must be flagged in three places: commit footer (`**BREAKING CHANGE:**`), CHANGELOG.md, and PR description
 - Every PR MUST include a CHANGELOG.md entry under `## [Unreleased]` — do not open a PR without it
+- CHANGELOG subsections under `## [Unreleased]` must follow Keep a Changelog order: `Added` → `Changed` → `Deprecated` → `Removed` → `Fixed` → `Security`
 - NEVER squash commits without explicit user confirmation. NEVER force push without explicit request
 - Detailed commit and CHANGELOG workflow in `.claude/rules/commit-changelog.md`
 

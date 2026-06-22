@@ -11,7 +11,7 @@ paths:
 Before writing component code in a new React/TypeScript/Vite project, define the foundation:
 
 1. **Folder structure** — establish the layout before the first component
-2. **ESLint + Prettier** — configure from the start, not retroactively
+2. **ESLint + Prettier** — configure from the start, not retroactively (include `eslint-plugin-regexp` for regex safety)
 3. **Testing setup** — Jest or Vitest configured and a first smoke test passing
 4. **Styled-components** — co-located `styles.ts` pattern from day one
 
@@ -90,10 +90,11 @@ Zero errors, zero warnings. Run `yarn lint` before committing.
 | `no-explicit-any` | Use `Record<string, unknown>` or define proper types |
 | `no-inline-styles` | Use styled-components in `styles.ts` |
 | `no-console` | Use `useState` for error state, framework logger on server |
-| `no-floating-promises` | Prefix with `void` in `useEffect` |
+| `no-floating-promises` | `await` in async functions; `void` only inside `useEffect` (React forbids async useEffect) |
 | `no-restricted-imports` | Use absolute paths, no `../../` relative parents |
 | `import/order` | Groups: (1) external, (2) absolute internal, (3) relative |
 | `@cspell/spellchecker` | Add `/* cspell:words term */` at top of file |
+| `regexp/no-super-linear-backtracking` | Prevent ReDoS — use bounded quantifiers (`\d{1,4}` not `\d+`) |
 | Zero `eslint-disable` | Fix the root cause, no exceptions |
 
 ## React State and Props
@@ -113,6 +114,17 @@ Zero errors, zero warnings. Run `yarn lint` before committing.
 - Reuse existing components before creating new ones
 - One class per file for domain entities
 
+## Modern API Preferences (ES2021+)
+
+- `replaceAll('x', 'y')` over `replace(/x/g, 'y')` for literal string replacements
+- `Object.hasOwn(obj, key)` over `Object.prototype.hasOwnProperty.call(obj, key)`
+- `.at(-1)` over `[arr.length - 1]` for last-element access
+- `.includes(val)` over `.some(x => x === val)` for value existence checks
+- `Number.parseInt/parseFloat/isNaN` over global `parseInt/parseFloat/isNaN`
+- `codePointAt/fromCodePoint` over `charCodeAt/fromCharCode` for Unicode safety
+- Always provide explicit comparator to `Array.sort()`
+- Use native `<button>` instead of `<span role="button">` for interactive elements
+
 ## Testing
 
 Tests live under `tests/`, mirroring the source tree. Split by concern when files approach the line limit:
@@ -121,17 +133,17 @@ Tests live under `tests/`, mirroring the source tree. Split by concern when file
 - `*_interactions.test.tsx` — clicks, form submissions, callbacks
 - `*_filters.test.tsx` — search, sort, pagination behavior
 
-### Given / When / Then Pattern (mandatory)
+### given / when / then Pattern (mandatory)
 
 ```typescript
 it('should show error when API fails', () => {
-  // Given: a service that returns an error
+  // given: a service that returns an error
   const stubService = jest.fn().mockRejectedValue(new Error('API error'));
 
-  // When: the component renders
+  // when: the component renders
   const {getByText} = render(<MyComponent service={stubService} />);
 
-  // Then: the error message is displayed
+  // then: the error message is displayed
   expect(getByText('Something went wrong')).toBeInTheDocument();
 });
 ```

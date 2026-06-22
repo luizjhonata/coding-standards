@@ -36,6 +36,27 @@ If no argument is provided, use the current branch as-is.
 3. If there are still lint errors, read the files with errors and fix them manually by editing the code.
 4. Re-run `make lint` to confirm all errors are resolved.
 5. Repeat steps 3-4 until all lint errors are gone or you are stuck on an error you cannot resolve (in that case, ask the user for help).
+6. **Duplicated string literals (SonarQube `go:S1192` parity) — MANDATORY.** `make lint`'s shared `goconst` config does NOT match Sonar S1192 on TWO axes, so duplicated literals pass `make lint` but fail Sonar (this has caused repeated PR failures, in both test AND production files):
+   - it excludes `_test.go` (and the merge cannot override that exclusion), and
+   - `goconst` defaults `ignore-calls: true`, so it skips literals passed as function-call arguments (e.g. `fmt.Errorf("...")`, `t.Run("...")`) — exactly the strings Sonar flags.
+   Validate explicitly with a goconst pass that fixes both gaps:
+   - Write a temp config (e.g. `/tmp/goconst-s1192.yml`):
+     ```yaml
+     version: "2"
+     linters:
+       default: none
+       enable: [goconst]
+       settings:
+         goconst:
+           min-len: 10
+           min-occurrences: 3
+           ignore-calls: false
+     ```
+   - Run over the whole module INCLUDING tests (`golangci-lint` if on PATH, otherwise `./bin/golangci-lint`):
+     `golangci-lint run -c /tmp/goconst-s1192.yml --tests ./... 2>&1 | grep goconst`
+   - Get ALL changed Go files (not only tests): `git diff --name-only main...HEAD -- '*.go'`. For every finding located in one of those CHANGED files, extract the repeated literal into a package-level constant (a `const` block; for format strings keep the verb, e.g. `const fooMsg = "unsupported X: %s"`). Ignore findings only in files NOT changed on this branch (pre-existing/legacy).
+   - Note: `goconst` counts per-package while Sonar counts per-file, so this gate is a strict SUPERSET of S1192 — it never misses an S1192 and may ask you to extract a few cross-file dups too (harmless DRY). Extract them; do not skip.
+   - Re-run until there are no findings in changed files. Report each literal you turned into a constant.
 
 ## Step 3: Report results
 
@@ -58,4 +79,10 @@ Report format:
 
 **Still failing** (if any):
 - `file5.tsx:42` — error description
+```
+
+For Go, the report MUST also include a line for the `go:S1192` test-literal check (step 6), e.g.:
+
+```
+**Test literals (go:S1192 parity)**: extracted `alert.change_status` → `testAlertPendingAction`  (or: "no duplicated literals in changed test files")
 ```

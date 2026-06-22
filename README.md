@@ -61,6 +61,42 @@ write code → commit → /branch-lint → /branch-test → commit fixes → /br
 5. If review leads to code changes, **re-run `/branch-lint` and `/branch-test`** to ensure nothing broke
 6. **Commit and push**
 
+### Shell commands
+
+Standalone shell helpers, installed separately from the Claude rules:
+
+| Command | Description |
+|---------|-------------|
+| `cs` | Claude session finder — lists recent Claude Code sessions with their directory, start/last activity times, and first/last prompts, then `cd`s into the chosen one and resumes it. Handy for picking up work after a reboot. |
+
+Usage:
+
+```
+cs                 # list recent sessions and pick one to resume
+cs <keyword>       # show only sessions whose directory or prompts contain <keyword>
+                   #   e.g. `cs payments` matches ~/work/payments-api or a prompt about payments
+cs --list          # print the table only, no selection prompt
+cs --limit 40      # show more sessions (default is 20)
+```
+
+Running `cs` prints a numbered table — for each session you see its directory, how long ago it was last active, and both the first prompt (what it was about) and the last prompt (where you left off). You then type a number to resume that session:
+
+```
+ 1  ~/work/payments-api  (2h)
+     ↪ start  Fri 20/06 09:14:  implement webhook retry with exponential backoff
+     ↩ last   Fri 20/06 16:52:  add a test for the max-retries ceiling
+ 2  ~/work/payments-api  (5h)
+     ↪ start  Fri 20/06 11:03:  why is the idempotency key being ignored on refunds
+     ↩ last   Fri 20/06 13:40:  fixed — it was lowercased before the lookup
+ 3  ~/work/auth-service  (1d)
+     ↪ start  Thu 19/06 15:20:  add rate limiting to the login endpoint
+     ↩ last   Thu 19/06 15:58:  done, 5 attempts per minute per IP
+
+Number to resume (Enter to cancel): 1
+```
+
+In this example, two sessions share the same directory (`payments-api`); the `start`/`last` lines and timestamps let you tell which one continues the work you care about — usually the most recent.
+
 ## Installation
 
 ### Global (applies to all projects)
@@ -87,11 +123,36 @@ curl -fsSL https://raw.githubusercontent.com/luizjhonata/coding-standards/main/i
 curl -fsSL https://raw.githubusercontent.com/luizjhonata/coding-standards/main/install-rules.sh | sh -s -- --force ./my-project
 ```
 
+### `cs` Claude session finder (separate installer)
+
+Installs `~/.local/bin/claude-sessions.py` and adds a `cs` function to your shell rc file. Requires `python3` (3.7+) and the `claude` CLI in PATH.
+
+> An **rc file** ("run commands") is the startup script your shell runs every time it opens — it holds your aliases, functions, and environment variables. For most people that's `~/.zshrc` (zsh) or `~/.bashrc` (bash); the installer detects which one you use.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/luizjhonata/coding-standards/main/install-cs.sh | sh
+```
+
+By default the installer auto-detects your shell and adds the function to `~/.zshrc` (zsh) or `~/.bashrc` (bash). To overwrite the script without prompting, or to target a non-default rc file:
+
+```bash
+# overwrite an existing install without prompting
+curl -fsSL https://raw.githubusercontent.com/luizjhonata/coding-standards/main/install-cs.sh | sh -s -- --force
+
+# install into a specific rc file (overrides auto-detection)
+curl -fsSL https://raw.githubusercontent.com/luizjhonata/coding-standards/main/install-cs.sh | sh -s -- /path/to/your/rc-file
+```
+
 ## Structure
 
 ```
 coding-standards/
 ├── install-rules.sh
+├── install-cs.sh
+├── cli/
+│   └── cs/
+│       ├── claude-sessions.py
+│       └── cs.sh
 └── claude/
     ├── CLAUDE.md
     ├── commands/

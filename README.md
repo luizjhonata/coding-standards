@@ -28,12 +28,13 @@ Loaded automatically when editing matching files:
 | `go/testing.md` | Build flags, BDD, parallel tests, sub-test naming, builders, testify |
 | **Frontend** | |
 | `frontend/react-general.md` | React, TypeScript, styled-components, ESM/CJS |
+| `frontend/type-safety.md` | Runtime type safety for TS/JS — validate external data, narrowing, guards |
 | `frontend/osd-plugin.md` | OpenSearch Dashboards plugin development |
 | **Infrastructure** | |
 | `infra/terraform.md` | Terraform, Terragrunt, Helm, version verification |
 | `terra-cli.md` | Terraform/Terragrunt CLI wrapper usage |
 | **General** | |
-| `commit-changelog.md` | CHANGELOG.md — entries, rebase conflict resolution |
+| `commit-changelog.md` | CHANGELOG.md — chlog and legacy workflows, entries, rebase conflict resolution |
 | `project-onboarding.md` | README, main.go, go.mod, Dockerfile |
 | `azure-devops-pr.md` | Azure DevOps PR descriptions via MCP |
 
@@ -45,6 +46,7 @@ Loaded automatically when editing matching files:
 | `/branch-test` | Run tests for changed files only (Go and Frontend), fix failures and retry |
 | `/branch-review` | Review architecture, design, and standards compliance on changed files |
 | `/jira-create` | Create Jira tickets (Epic, Story, Bug, Subtask) with structured content |
+| `/handoff` | Generate or resume a session handoff document to continue work in a new conversation |
 
 ### Recommended workflow
 
@@ -159,6 +161,7 @@ coding-standards/
     │   ├── branch-lint.md
     │   ├── branch-test.md
     │   ├── branch-review.md
+    │   ├── handoff.md
     │   └── jira-create.md
     └── rules/
         ├── golang.md
@@ -171,6 +174,7 @@ coding-standards/
         │   └── testing.md
         ├── frontend/
         │   ├── react-general.md
+        │   ├── type-safety.md
         │   └── osd-plugin.md
         ├── infra/
         │   └── terraform.md

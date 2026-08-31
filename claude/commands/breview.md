@@ -1,6 +1,6 @@
 Review code changes in the current branch compared to main. The goal is to validate architecture, design, and standards compliance — things that automated tools (lint, test) cannot catch.
 
-**Prerequisite**: `/branch-lint` and `/branch-test` must pass before running this command. If they haven't been run, remind the user and stop.
+**Prerequisite**: `/blint` and `/btest` must pass before running this command. If they haven't been run, remind the user and stop.
 
 All review output MUST be in English.
 
@@ -86,4 +86,4 @@ Do NOT flag issues that lint or static analysis already covers (formatting, impo
 Do NOT auto-fix anything. Present the report and wait for the user to decide:
 - If the user asks to fix all, fix in order: critical → suggestion → nice to have.
 - If the user asks to fix specific items, fix only those.
-- After any code changes, remind the user: "Code was modified during review. Run `/branch-lint` and `/branch-test` to ensure changes pass before committing."
+- After any code changes, remind the user: "Code was modified during review. Run `/blint` and `/btest` to ensure changes pass before committing."

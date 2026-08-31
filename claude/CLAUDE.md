@@ -94,10 +94,10 @@ Strict layer separation: Controllers → Commands (Application) → Entities + R
 
 NEVER create a PR without running these three skills in order:
 
-1. `/branch-lint` — catches formatting, lint errors, and auto-fixes what it can
+1. `/blint` — catches formatting, lint errors, and auto-fixes what it can
 2. `yarn typecheck` — catches TypeScript compilation errors that ESLint misses (type mismatches, missing exports, incompatible generics). Without this step, the production build (`yarn build`) can fail even when lint and tests pass.
-3. `/branch-test` — runs tests on changed code to catch regressions
-4. `/branch-review` — catches architecture, design, caller-impact, and dead code issues
+3. `/btest` — runs tests on changed code to catch regressions
+4. `/breview` — catches architecture, design, caller-impact, and dead code issues
 
 If any step reports failures, fix them before proceeding to the next step. Only after all four pass, create the PR.
 

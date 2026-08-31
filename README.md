@@ -42,9 +42,9 @@ Loaded automatically when editing matching files:
 
 | Command | Description |
 |---------|-------------|
-| `/branch-lint` | Run linter on changed files only (Go and Frontend), auto-fix and retry |
-| `/branch-test` | Run tests for changed files only (Go and Frontend), fix failures and retry |
-| `/branch-review` | Review architecture, design, and standards compliance on changed files |
+| `/blint` | Run linter on changed files only (Go and Frontend), auto-fix and retry |
+| `/btest` | Run tests for changed files only (Go and Frontend), fix failures and retry |
+| `/breview` | Review architecture, design, and standards compliance on changed files |
 | `/jira-create` | Create Jira tickets (Epic, Story, Bug, Subtask) with structured content |
 | `/handoff` | Generate or resume a session handoff document to continue work in a new conversation |
 
@@ -53,14 +53,14 @@ Loaded automatically when editing matching files:
 All commands compare committed changes in the current branch against `main`. Commit your work before running them.
 
 ```
-write code → commit → /branch-lint → /branch-test → commit fixes → /branch-review → fix if needed → /branch-lint → /branch-test → commit → push
+write code → commit → /blint → /btest → commit fixes → /breview → fix if needed → /blint → /btest → commit → push
 ```
 
-1. **`/branch-lint`** first — auto-fixes formatting and catches static analysis issues
-2. **`/branch-test`** second — runs tests and fixes failures
+1. **`/blint`** first — auto-fixes formatting and catches static analysis issues
+2. **`/btest`** second — runs tests and fixes failures
 3. **Commit** any fixes from lint and test
-4. **`/branch-review`** last — read-only analysis of architecture, design, and naming (only checks what automated tools can't catch)
-5. If review leads to code changes, **re-run `/branch-lint` and `/branch-test`** to ensure nothing broke
+4. **`/breview`** last — read-only analysis of architecture, design, and naming (only checks what automated tools can't catch)
+5. If review leads to code changes, **re-run `/blint` and `/btest`** to ensure nothing broke
 6. **Commit and push**
 
 ### Shell commands
@@ -158,9 +158,9 @@ coding-standards/
 └── claude/
     ├── CLAUDE.md
     ├── commands/
-    │   ├── branch-lint.md
-    │   ├── branch-test.md
-    │   ├── branch-review.md
+    │   ├── blint.md
+    │   ├── btest.md
+    │   ├── breview.md
     │   ├── handoff.md
     │   └── jira-create.md
     └── rules/

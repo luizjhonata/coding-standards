@@ -17,9 +17,16 @@ BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 API_URL="https://api.github.com/repos/${REPO}/contents"
 
-OVERWRITE_ALL=""
+# "Overwrite all" is tracked via a marker file so the choice survives subshells.
+# The download loop runs in a pipe subshell (`echo | while`) and directory
+# recursion runs in its own subshell, so a plain variable set in either would be
+# lost. Presence of the marker means "overwrite everything without asking".
+OVERWRITE_ALL_MARKER="${TMPDIR:-/tmp}/install-rules-overwrite-all.$$"
+rm -f "$OVERWRITE_ALL_MARKER"
+trap 'rm -f "$OVERWRITE_ALL_MARKER"' EXIT INT TERM
+
 if [ "${1:-}" = "--force" ]; then
-  OVERWRITE_ALL="yes"
+  : > "$OVERWRITE_ALL_MARKER"
   shift
 fi
 
@@ -35,14 +42,14 @@ prompt_overwrite() {
   if [ ! -f "$file" ]; then
     return 0
   fi
-  if [ "$OVERWRITE_ALL" = "yes" ]; then
+  if [ -f "$OVERWRITE_ALL_MARKER" ]; then
     return 0
   fi
   printf "File %s already exists. Overwrite? [y/n/a] " "$file"
   read -r answer </dev/tty
   case "$answer" in
     y|Y) return 0 ;;
-    a|A) OVERWRITE_ALL="yes"; return 0 ;;
+    a|A) : > "$OVERWRITE_ALL_MARKER"; return 0 ;;
     *)   return 1 ;;
   esac
 }
@@ -86,7 +93,9 @@ download_directory() {
       if [ "$type" = "file" ]; then
         download_file "${BASE_URL}/${remote_path}/${name}" "${local_base}/${name}"
       elif [ "$type" = "dir" ]; then
-        download_directory "${remote_path}/${name}" "${local_base}/${name}"
+        # Run recursion in a subshell so it cannot clobber remote_path/local_base
+        # in this loop (POSIX sh has no `local`; these vars are global).
+        ( download_directory "${remote_path}/${name}" "${local_base}/${name}" )
       fi
       name=""
     fi
